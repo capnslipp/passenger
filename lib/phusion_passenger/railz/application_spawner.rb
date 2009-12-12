@@ -309,8 +309,13 @@ private
 		end
 		begin
 			require_dependency 'application_controller'
-		rescue LoadError
-			require_dependency 'application'
+		rescue LoadError => e
+			begin
+				require_dependency 'application'
+			rescue LoadError
+				# raise the original error because it's much more informative
+				raise e
+			end
 		end
 		
 		# - No point in preloading the application sources if the garbage collector
